@@ -2,5 +2,3 @@ streamlit
 unstructured
 tiktoken
 pdfminer.six
-unstructured_pytesseract
-unstructured_inference
