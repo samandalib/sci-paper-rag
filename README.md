@@ -30,25 +30,50 @@ This specialization enables more accurate, context-aware retrieval and generatio
 
 ```
 sci-paper-rag/
+  python/
+    pdf_to_jsonl.py           # CLI script for PDF extraction
+    pdf_to_jsonl_app.py       # Streamlit app for PDF upload/extraction
+    requirements.txt          # Python dependencies
   src/
-    chunking.ts      # Document chunking logic
-    embedding.ts     # Embedding logic (OpenAI)
-    retrieval.ts     # Vector search logic
-    prompts.ts       # Prompt assembly and templates
-    openai.ts        # OpenAI API wrapper
-    config.ts        # Config loader (Supabase/.env)
-    types.ts         # Shared types/interfaces
-    index.ts         # Main entry point
-  test/
-    ...              # Unit and integration tests
+    ...                      # TypeScript modules (chunking, embedding, etc.)
   README.md
   package.json
 ```
 
-## Usage (Coming Soon)
-- Import the library into your backend
-- Configure with your Supabase and OpenAI keys
-- Use the provided API handlers or call the core functions directly
+---
+
+## Development Roadmap (Hybrid Pipeline)
+
+### 1. PDF Extraction & Preprocessing (Python)
+- **Tool:** `unstructured` (open-source)
+- **Interface:**
+  - CLI script for power users
+  - **Streamlit app** for non-technical users (drag-and-drop PDF upload, download JSONL output)
+- **Output:** JSONL file with section, text, page, and metadata for each chunk/element
+- **Optional:** Integrate `scispacy` for NER/abbreviation expansion
+
+### 2. Chunking & Ingestion (TypeScript/Node.js)
+- **Reads** the JSONL output from Python
+- **Performs** token-aware chunking with overlap
+- **Attaches/extends** metadata as needed
+
+### 3. Embedding & Storage
+- **Embeds** chunks using open-source models (InstructorXL) or free-tier APIs
+- **Stores** in a vector DB (Qdrant, Chroma, or Supabase/pgvector)
+- **Supports** metadata filtering and hybrid search
+
+### 4. Retrieval, Reranking, and Answer Generation
+- **Handles** query expansion, synonym/abbreviation handling, and NER
+- **Performs** hybrid search (vector + keyword + metadata)
+- **Reranks** results for best relevance
+- **Uses** prompt engineering for evidence-based, citation-rich answers
+
+### 5. UI/UX & Feedback (Optional)
+- **Streamlit app** for PDF upload and extraction
+- **Example React/Next.js UI** for search and answer display
+- **Feedback loop** for continuous improvement
+
+---
 
 ## Status
 **In development.** This library is being extracted from a production RAG pipeline and will be published as a standalone package.
