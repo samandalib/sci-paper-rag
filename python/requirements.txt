@@ -2,3 +2,7 @@ streamlit
 unstructured
 tiktoken
 pdfminer.six
+pi-heif
+unstructured_pytesseract
+unstructured_inference
+pdf2image
