@@ -9,6 +9,19 @@ st.set_page_config(page_title="Pre-process pdf research papers for RAG database"
 st.markdown("<h1 style='margin-bottom:0.2em;'>Pre-process PDF Research Papers for RAG Database</h1>", unsafe_allow_html=True)
 st.caption("Step 1: Extract and chunk your research papers for RAG. Step 2: Upload the chunked files to your Admin dashboard.")
 
+# Add a global Clear All Memory button at the top
+if st.button("🧹 Clear All Memory", key="clear_all_memory"):
+    keys_to_clear = [k for k in st.session_state.keys() if k.startswith("session_") or k.startswith("jsonl_") or k.startswith("count_") or k.startswith("error_") or k.startswith("chunks_") or k.startswith("file_chunk_settings_") or k.startswith("downloaded_file_")]
+    for k in keys_to_clear:
+        del st.session_state[k]
+    st.success("All file data and memory cleared.")
+    st.rerun()
+
+# Show a persistent message if a file was just downloaded and cleared
+if 'last_downloaded_file' in st.session_state:
+    st.info(f"File '{st.session_state['last_downloaded_file']}' was downloaded and cleared from memory. To process it again, please re-upload.")
+    del st.session_state['last_downloaded_file']
+
 # About this tool toggle
 if 'show_about' not in st.session_state:
     st.session_state['show_about'] = False
@@ -184,6 +197,8 @@ if uploaded_files:
                         st.session_state[f"error_{session_key}"] = None
                         if os.path.exists(tmp_pdf_path):
                             os.remove(tmp_pdf_path)
+                        # Remove the original PDF from memory after processing
+                        uploaded_file = None
                         st.rerun()
                     except Exception as e:
                         st.session_state[f"error_{session_key}"] = str(e)
@@ -266,14 +281,28 @@ if uploaded_files:
                     if st.session_state.get(f"chunks_{session_key}"):
                         chunks = st.session_state[f"chunks_{session_key}"]
                         chunked_jsonl = "\n".join(json.dumps(c, ensure_ascii=False) for c in chunks)
-                        st.download_button(
+                        # Download button with memory cleanup after download
+                        if st.download_button(
                             label="⬇️ Download Chunked JSONL",
                             data=chunked_jsonl,
                             file_name=f"{base_name}_chunked.jsonl",
                             mime="application/json",
                             key=f"download_chunked_{idx}",
                             type="secondary"
-                        )
+                        ):
+                            # Clear all session state for this file after download
+                            for k in [
+                                f"session_{uploaded_file.name}_{idx}",
+                                f"jsonl_{uploaded_file.name}_{idx}",
+                                f"count_{uploaded_file.name}_{idx}",
+                                f"error_{uploaded_file.name}_{idx}",
+                                f"chunks_{uploaded_file.name}_{idx}",
+                                f"file_chunk_settings_{uploaded_file.name}_{idx}"
+                            ]:
+                                if k in st.session_state:
+                                    del st.session_state[k]
+                            st.session_state['last_downloaded_file'] = uploaded_file.name
+                            st.rerun()
                         st.markdown("**Preview of first 3 chunks:**")
                         for c in chunks[:3]:
                             st.code(json.dumps(c, ensure_ascii=False, indent=2), language="json")
