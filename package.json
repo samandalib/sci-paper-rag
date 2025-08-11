@@ -1,0 +1,52 @@
+{
+  "name": "sci-paper-rag",
+  "version": "1.0.0",
+  "description": "A complete RAG system for scientific papers with PDF preprocessing, embedding, and chat interface",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup-db": "node scripts/setup-database.js",
+    "process-pdfs": "node scripts/pdf-chunk-embed-upload.cjs",
+    "process-pdfs:dir": "node scripts/pdf-chunk-embed-upload.cjs",
+    "streamlit": "streamlit run python/pdf_to_jsonl_app.py"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.17",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "^14.0.3",
+    "next": "^14.0.3",
+    "openai": "^4.20.1",
+    "postcss": "^8.4.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.6",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "^14.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "rag",
+    "retrieval-augmented-generation",
+    "scientific-papers",
+    "pdf-processing",
+    "vector-search",
+    "openai",
+    "supabase"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
