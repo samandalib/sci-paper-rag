@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
-import { PythonPDFProcessor } from '../services/python-pdf-processor.js';
+import { PythonPDFProcessor } from '../../services/python-pdf-processor.js';
 
 // Disable default body parser for file uploads
 export const config = {

@@ -11,6 +11,7 @@ interface UploadedFile {
   original_filename: string;
   processing_status: string;
   total_chunks: number;
+  file_size_mb?: number;
   created_at: string;
 }
 
@@ -105,26 +106,42 @@ export default function AdminDashboard() {
     setIsUploading(true);
     setUploadProgress(0);
 
-    // TODO: Implement actual file upload and processing
-    for (let i = 0; i <= 100; i += 10) {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setUploadProgress(i);
+    try {
+      const formData = new FormData();
+      formData.append('pdf', files[0]);
+
+      const response = await fetch('/api/upload-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Add the uploaded file to the list
+        const newFile: UploadedFile = {
+          id: result.data.id,
+          filename: result.data.filename,
+          original_filename: result.data.original_filename,
+          processing_status: result.data.processing_status,
+          total_chunks: result.data.total_chunks || 0,
+          file_size_mb: result.data.file_size_mb,
+          created_at: result.data.created_at
+        };
+
+        setUploadedFiles(prev => [newFile, ...prev]);
+        alert('PDF uploaded successfully! Processing will begin shortly.');
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
-
-    // Add mock uploaded file
-    const newFile: UploadedFile = {
-      id: Date.now().toString(),
-      filename: `uploaded_${Date.now()}.pdf`,
-      original_filename: files[0].name,
-      processing_status: 'completed',
-      total_chunks: Math.floor(Math.random() * 50) + 20,
-      created_at: new Date().toISOString()
-    };
-
-    setUploadedFiles(prev => [newFile, ...prev]);
-    setIsUploading(false);
-    setUploadProgress(0);
-    alert('File upload simulation complete! Implement actual upload logic.');
   };
 
   const handleChatSend = async () => {
@@ -135,15 +152,21 @@ export default function AdminDashboard() {
     setChatMessage('');
     setIsChatLoading(true);
 
-    // TODO: Implement actual RAG chat API call
-    setTimeout(() => {
-      const aiResponse = { 
-        role: 'assistant' as const, 
-        content: `This is a placeholder response for: "${userMessage.content}". The actual RAG API will be implemented to use your uploaded documents and configured settings.` 
-      };
-      setChatHistory(prev => [...prev, aiResponse]);
+    try {
+      // TODO: Implement actual RAG chat API call when ready
+      // For now, show a message that RAG is not yet implemented
+      setTimeout(() => {
+        const aiResponse = { 
+          role: 'assistant' as const, 
+          content: `I understand you're asking: "${userMessage.content}". The RAG chat functionality is currently being implemented. Once complete, I'll be able to search through your uploaded documents and provide relevant answers based on your configured settings.` 
+        };
+        setChatHistory(prev => [...prev, aiResponse]);
+        setIsChatLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error sending chat message:', error);
       setIsChatLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -284,7 +307,7 @@ export default function AdminDashboard() {
                           {file.original_filename}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {file.total_chunks} chunks • {new Date(file.created_at).toLocaleDateString()}
+                          {file.total_chunks} chunks • {file.file_size_mb ? `${file.file_size_mb} MB • ` : ''}{new Date(file.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
