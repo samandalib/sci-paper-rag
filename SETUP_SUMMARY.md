@@ -116,6 +116,7 @@ npm run streamlit
 
 ## 📚 **Documentation Available**
 
+- **[📚 Documentation Hub](./docs/README.md)** - Centralized documentation for the entire project
 - **README_COMPLETE.md** - Comprehensive system guide
 - **Code Comments** - Detailed implementation notes
 - **API Documentation** - Endpoint specifications

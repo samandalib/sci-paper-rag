@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
@@ -31,6 +28,14 @@ const nextConfig = {
       {
         source: '/api/document-stats',
         destination: '/api/document-stats',
+      },
+      {
+        source: '/api/user-rag-settings',
+        destination: '/api/user-rag-settings',
+      },
+      {
+        source: '/api/user-documents',
+        destination: '/api/user-documents',
       },
     ];
   },

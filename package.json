@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "setup-db": "node scripts/setup-database.js",
+    "setup-multi-tenant": "node scripts/setup-multi-tenant-db.js",
     "process-pdfs": "node scripts/pdf-chunk-embed-upload.cjs",
     "process-pdfs:dir": "node scripts/pdf-chunk-embed-upload.cjs",
     "streamlit": "streamlit run python/pdf_to_jsonl_app.py"
